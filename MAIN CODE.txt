@@ -1,0 +1,210 @@
+import machine
+
+seg_a = machine.Pin(15,machine.Pin.OUT)
+seg_b = machine.Pin(13,machine.Pin.OUT)
+seg_c = machine.Pin(12,machine.Pin.OUT)
+seg_d = machine.Pin(26,machine.Pin.OUT)
+seg_e = machine.Pin(32,machine.Pin.OUT)
+seg_f = machine.Pin(21,machine.Pin.OUT)
+seg_g = machine.Pin(19,machine.Pin.OUT)
+inc_b = machine.Pin(34,machine.Pin.IN)
+dec_b = machine.Pin(22,machine.Pin.IN)
+res_b = machine.Pin(23,machine.Pin.IN)
+counter=0
+press=False
+button=0
+
+def zero():
+    seg_a.value(0)
+    seg_b.value(0)
+    seg_c.value(0)
+    seg_d.value(0)
+    seg_e.value(0)
+    seg_f.value(0)
+    seg_g.value(1)
+    
+def one():
+    seg_a.value(1)
+    seg_b.value(0)
+    seg_c.value(0)
+    seg_d.value(1)
+    seg_e.value(1)
+    seg_f.value(1)
+    seg_g.value(1)
+    
+    
+def two():
+    seg_a.value(0)
+    seg_b.value(0)
+    seg_c.value(1)
+    seg_d.value(0)
+    seg_e.value(0)
+    seg_f.value(1)
+    seg_g.value(0)
+    
+def three():
+    seg_a.value(0)
+    seg_b.value(0)
+    seg_c.value(0)
+    seg_d.value(0)
+    seg_e.value(1)
+    seg_f.value(1)
+    seg_g.value(0)
+    
+def four():
+    seg_a.value(1)
+    seg_b.value(0)
+    seg_c.value(0)
+    seg_d.value(1)
+    seg_e.value(1)
+    seg_f.value(0)
+    seg_g.value(0)
+    
+def five():
+    seg_a.value(0)
+    seg_b.value(1)
+    seg_c.value(0)
+    seg_d.value(0)
+    seg_e.value(1)
+    seg_f.value(0)
+    seg_g.value(0)
+    
+def six():
+    seg_a.value(0)
+    seg_b.value(1)
+    seg_c.value(0)
+    seg_d.value(0)
+    seg_e.value(0)
+    seg_f.value(0)
+    seg_g.value(0)
+    
+def seven():
+    seg_a.value(0)
+    seg_b.value(0)
+    seg_c.value(0)
+    seg_d.value(1)
+    seg_e.value(1)
+    seg_f.value(1)
+    seg_g.value(1)
+    
+def eight():
+    seg_a.value(0)
+    seg_b.value(0)
+    seg_c.value(0)
+    seg_d.value(0)
+    seg_e.value(0)
+    seg_f.value(0)
+    seg_g.value(0)
+    
+def nine():
+    seg_a.value(0)
+    seg_b.value(0)
+    seg_c.value(0)
+    seg_d.value(0)
+    seg_e.value(1)
+    seg_f.value(0)
+    seg_g.value(0)
+
+def handle_interruptinc(pin):
+    global counter
+    counter+=1
+    global press
+    press = True
+    global button
+    button = int(str(pin)[4:-1])
+def handle_interruptdec(pin):
+    global counter
+    counter=counter-1
+    global press
+    press = True
+    global button
+    button = int(str(pin)[4:-1])
+    
+def handle_interruptres(pin):
+    global counter
+    counter=0
+    global press
+    press = True
+    global button
+    button = int(str(pin)[4:-1])
+    
+def inc():
+    global counter
+    if(counter==0):
+        zero()
+    elif(counter==1):
+        one()
+    elif(counter==2):
+        two()
+    elif(counter==3):
+        three()   
+    elif(counter==4):
+        four()
+    elif(counter==5):
+        five()    
+    elif(counter==6):
+        six()    
+    elif(counter==7):
+        seven()
+    elif(counter==8):
+        eight()
+    elif(counter==9):
+        nine()
+    elif(counter>9):
+        res()
+
+def dec():
+    global counter
+    if(counter==9):
+        nine()
+    elif(counter==8):
+        eight()
+    elif(counter==7):
+        seven()
+    elif(counter==6):
+        six()
+    elif(counter==5):
+        five()
+    elif(counter==4):
+        four()
+    elif(counter==3):
+        three()
+    elif(counter==2):
+        two()
+    elif(counter==1):
+        one()
+    elif(counter==0):
+        zero()
+    elif(counter<0):
+        counter=9
+        nine()
+            
+def res():
+    global counter
+    counter=0
+    zero()
+
+
+zero()
+while(True):
+    inc_b.irq(trigger=machine.Pin.IRQ_FALLING, handler=handle_interruptinc)
+    dec_b.irq(trigger=machine.Pin.IRQ_FALLING, handler=handle_interruptdec)
+    res_b.irq(trigger=machine.Pin.IRQ_FALLING, handler=handle_interruptres)
+    
+    if(button==34):
+        print(counter)
+        inc()
+    
+    elif(button==22):
+        print(counter)
+        dec()
+            
+    elif(button==23):
+        print(counter)
+        res()
+        
+    
+    
+
+
+
